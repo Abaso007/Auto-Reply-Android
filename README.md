@@ -331,6 +331,7 @@ Optional protection against fraudulent and suspicious messages:
        <string name="save_custom_reply_interstitial">your_interstitial_id</string>
        <string name="ai_enable_interstitial">your_ai_interstitial_id</string>
        <string name="ai_settings_banner">your_ai_banner_id</string>
+       <string name="live_chat_enable_interstitial">your_live_chat_enable_interstitial_id</string>
    </resources>
    ```
 
