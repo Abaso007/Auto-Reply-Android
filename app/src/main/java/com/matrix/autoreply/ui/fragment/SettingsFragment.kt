@@ -13,6 +13,7 @@ import androidx.preference.SwitchPreference
 import com.matrix.autoreply.R
 import com.matrix.autoreply.constants.Constants
 import com.matrix.autoreply.helpers.AutoStartHelper.Companion.instance
+import com.matrix.autoreply.helpers.DonateHelper
 import com.matrix.autoreply.preferences.PreferencesManager
 import com.matrix.autoreply.ui.CustomDialog
 import com.matrix.autoreply.utils.NotificationListenerUtil
@@ -56,6 +57,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
         aiSettingsPref?.setOnPreferenceClickListener {
             val intent = Intent(requireContext(), com.matrix.autoreply.ui.activity.AiSettingsActivity::class.java)
             startActivity(intent)
+            true
+        }
+        
+        // Handle Donate preference
+        val donatePref = findPreference<Preference>("pref_donate")
+        donatePref?.setOnPreferenceClickListener {
+            DonateHelper.showDonateDialog(requireContext())
             true
         }
 

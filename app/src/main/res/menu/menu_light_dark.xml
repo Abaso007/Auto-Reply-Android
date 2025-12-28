@@ -4,24 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <item
+        android:id="@+id/donate_menu"
+        android:icon="@drawable/ic_donate"
+        android:title="@string/donate_title"
+        app:showAsAction="always" />
+
+    <item
         android:id="@+id/action_toggle_theme"
         android:icon="@drawable/ic_baseline_invert_colors_24"
         android:title="Light/Dark"
         app:showAsAction="always"
         tools:ignore="HardcodedText" />
-
-    <item
-        android:id="@+id/help_menu"
-        android:icon="@drawable/ic_baseline_help_24"
-        android:title="Help"
-        app:showAsAction="always"
-        tools:ignore="HardcodedText" />
-
-<!--    <item-->
-<!--        android:id="@+id/setting_menu"-->
-<!--        android:icon="@drawable/ic_settings"-->
-<!--        android:title="Help"-->
-<!--        app:showAsAction="always"-->
-<!--        tools:ignore="HardcodedText" />-->
 
 </menu>

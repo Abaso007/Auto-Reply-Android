@@ -283,4 +283,15 @@
     <string name="live_chat_permission_message">Live Chat requires Accessibility Service permission to read messages and send replies in real-time.</string>
     <string name="live_chat_setup_complete">Live Chat setup is complete!</string>
     <string name="live_chat_test_instructions">To test Live Chat:\n\n1. Open WhatsApp or another enabled app\n2. Have someone send you a message\n3. Watch as Auto Reply responds automatically!\n\nNote: Keep the chat window open for Live Chat to work</string>
+    
+    <!-- Donate -->
+    <string name="donate_title">Support Development</string>
+    <string name="donate_summary">Help keep this project free with less ads</string>
+    <string name="donate_card_title">☕ Support This Project</string>
+    <string name="donate_card_message">Auto Reply is free and open-source with minimal ads. Your support helps maintain and improve the app!</string>
+    <string name="donate_button_primary">☕ Buy Me a Coffee</string>
+    <string name="donate_button_secondary">💚 GitHub Sponsors</string>
+    <string name="donate_thank_you">Thank you for your support! 🙏</string>
+    <string name="donate_url_primary" translatable="false">https://buymeacoffee.com/prasoonk187</string>
+    <string name="donate_url_secondary" translatable="false">https://github.com/sponsors/it5prasoon</string>
 </resources>

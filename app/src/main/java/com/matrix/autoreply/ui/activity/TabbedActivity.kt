@@ -21,6 +21,7 @@ import com.google.android.play.core.install.model.UpdateAvailability
 import com.matrix.autoreply.R
 import com.matrix.autoreply.databinding.ActivityTabbedBinding
 import com.matrix.autoreply.helpers.AlertDialogHelper
+import com.matrix.autoreply.helpers.DonateHelper
 import com.matrix.autoreply.ui.activity.main.SectionsPagerAdapter
 
 class TabbedActivity : AppCompatActivity() {
@@ -128,24 +129,11 @@ class TabbedActivity : AppCompatActivity() {
                 return true
             }
 
-            R.id.help_menu -> {
-                AlertDialogHelper.showDialog(
-                        this,
-                        "Help",
-                        "1. Give the required permissions.\n" +
-                                "2. Set custom text for auto reply.\n" +
-                                "3. Select the applications for which you want auto reply.\n" +
-                                "4. If you want group chat reply then turn on that option.\n" +
-                                "5. If you increase the reply frequency then one person gets reply only the set value times.\n" +
-                                "6. In MSG LOGS section you can see all the messages of the respective application (BETA).\n" +
-                                "7. Enjoy!!\n\n" +
-                                "This application is still under development so kindly post any bugs to github issues section you find on settings tab.",
-                        getString(R.string.ok),
-                        null
-                ) { dialog, _ -> dialog.cancel() }
-
+            R.id.donate_menu -> {
+                DonateHelper.showDonateDialog(this)
                 return true
             }
+            
             else -> super.onOptionsItemSelected(item)
         }
     }
