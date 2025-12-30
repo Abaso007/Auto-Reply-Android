@@ -7,7 +7,7 @@
     <string name="privacy_policy_label">Privacy Policy</string>
     <string name="service_name">Auto Reply</string>
     <string name="mainAutoReplyTextPlaceholder">(Custom Reply)</string>
-    <string name="auto_reply_default_message">I am not available.</string>
+    <string name="auto_reply_default_message">Thanks for your message! I will respond.</string>
     <string name="mainAutoReplyLabel">Set custom text to reply</string>
     <string name="mainAutoReplySwitchOffLabel">Status: OFF</string>
     <string name="mainAutoReplySwitchOnLabel">Status: ON</string>

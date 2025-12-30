@@ -25,7 +25,7 @@
             android:summary="Choose your preferred theme"
             android:entries="@array/theme_entries"
             android:entryValues="@array/theme_values"
-            android:defaultValue="system"
+            android:defaultValue="dark"
             app:useSimpleSummaryProvider="true"
             android:icon="@drawable/ic_baseline_invert_colors_24" />
 

@@ -51,17 +51,53 @@
                 android:orientation="vertical"
                 app:layout_constraintGuide_begin="16dp" />
 
+            <!-- Quick Reply Templates Section -->
+            <TextView
+                android:id="@+id/templatesTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Quick Reply Templates"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="@+id/guidelineLeft"
+                app:layout_constraintTop_toBottomOf="@+id/autoReplyTextInputLayout" />
+
+            <TextView
+                android:id="@+id/templatesSubtitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Tap to use a template"
+                android:textSize="12sp"
+                android:textColor="?android:attr/textColorSecondary"
+                app:layout_constraintEnd_toStartOf="@+id/guidelineRight"
+                app:layout_constraintStart_toStartOf="@+id/guidelineLeft"
+                app:layout_constraintTop_toBottomOf="@+id/templatesTitle" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/templatesRecyclerView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:nestedScrollingEnabled="false"
+                app:layout_constraintEnd_toStartOf="@+id/guidelineRight"
+                app:layout_constraintStart_toStartOf="@+id/guidelineLeft"
+                app:layout_constraintTop_toBottomOf="@+id/templatesSubtitle" />
+
             <!-- Save Button -->
             <Button
                 android:id="@+id/saveCustomReplyBtn"
-                android:layout_width="302dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
+                android:layout_marginTop="24dp"
                 android:layout_marginEnd="8dp"
                 android:text="@string/save"
                 app:layout_constraintEnd_toStartOf="@+id/guidelineRight"
                 app:layout_constraintStart_toStartOf="@+id/guidelineLeft"
-                app:layout_constraintTop_toBottomOf="@+id/autoReplyTextInputLayout" />
+                app:layout_constraintTop_toBottomOf="@+id/templatesRecyclerView" />
 
 
             <CheckBox

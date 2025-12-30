@@ -112,6 +112,8 @@
                             android:layout_marginTop="4dp"
                             android:text="@string/mainAutoReplyTextPlaceholder"
                             android:textSize="12sp"
+                            android:maxLines="1"
+                            android:ellipsize="end"
                             ads:layout_constraintBottom_toBottomOf="parent"
                             ads:layout_constraintEnd_toEndOf="parent"
                             ads:layout_constraintStart_toStartOf="parent"

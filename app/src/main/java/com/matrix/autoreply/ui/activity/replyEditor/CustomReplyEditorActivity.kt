@@ -10,6 +10,7 @@ import android.widget.CompoundButton
 import androidx.appcompat.app.ActionBar
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.graphics.toColorInt
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.FullScreenContentCallback
@@ -23,6 +24,7 @@ import com.matrix.autoreply.databinding.ActivityCustomReplyEditorBinding
 import com.matrix.autoreply.model.CustomRepliesData
 import com.matrix.autoreply.preferences.PreferencesManager
 import com.matrix.autoreply.ui.activity.BaseActivity
+import com.matrix.autoreply.ui.adapters.ReplyTemplateAdapter
 
 
 /**
@@ -80,6 +82,22 @@ class CustomReplyEditorActivity : BaseActivity() {
         })
 
         handleSaveReply()
+        setupTemplates()
+    }
+
+    /**
+     * Setup quick reply templates RecyclerView
+     */
+    private fun setupTemplates() {
+        val templates = ReplyTemplateAdapter.getDefaultTemplates()
+        val adapter = ReplyTemplateAdapter(templates) { templateText ->
+            // When user taps "Use" button, fill the text field with template
+            autoReplyText?.setText(templateText)
+            autoReplyText?.setSelection(templateText.length) // Move cursor to end
+        }
+        
+        binding.templatesRecyclerView.layoutManager = LinearLayoutManager(this)
+        binding.templatesRecyclerView.adapter = adapter
     }
 
     private fun handleSaveReply() {

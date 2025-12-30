@@ -462,7 +462,7 @@ class PreferencesManager private constructor(private val thisAppContext: Context
      * @return "light", "dark", "system", or "dynamic"
      */
     var appTheme: String
-        get() = _sharedPrefs.getString(KEY_APP_THEME, "system") ?: "system"
+        get() = _sharedPrefs.getString(KEY_APP_THEME, "dark") ?: "dark"
         set(theme) {
             _sharedPrefs.edit().putString(KEY_APP_THEME, theme).apply()
         }
