@@ -74,7 +74,7 @@ class MainFragment : Fragment() {
     private var delayMinus: ImageView? = null
     private var delayPlus: ImageView? = null
     private var delaySelectedText: TextView? = null
-    private var replyDelaySeconds = 3
+    private var replyDelaySeconds = 2
     private var activeContextsCount: TextView? = null
     private var badgesRecyclerView: RecyclerView? = null
     private var nextBadgeInfo: TextView? = null
@@ -90,6 +90,7 @@ class MainFragment : Fragment() {
     private var contactFilterSwitch: SwitchMaterial? = null
     private var selectContactsButton: com.google.android.material.button.MaterialButton? = null
     private var selectedContactsCountText: TextView? = null
+    private var contactFilterWarning: TextView? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
@@ -163,6 +164,7 @@ class MainFragment : Fragment() {
         contactFilterSwitch = binding.contactFilterSwitch
         selectContactsButton = binding.selectContactsButton
         selectedContactsCountText = binding.selectedContactsCountText
+        contactFilterWarning = binding.contactFilterWarning
         
         handleReplyOptionsCard()
         setupBadgesDisplay()
@@ -216,6 +218,9 @@ class MainFragment : Fragment() {
                 setSwitchState()
 
                 groupReplySwitch!!.isEnabled = isChecked
+                
+                // Update contact selector warning visibility
+                updateContactSelectorState()
             }
         }
     }
@@ -616,7 +621,7 @@ class MainFragment : Fragment() {
     }
 
     private fun setReplyDelaySeconds() {
-        replyDelaySeconds = preferencesManager?.replyDelaySeconds ?: 3
+        replyDelaySeconds = preferencesManager?.replyDelaySeconds ?: 2
         delaySelectedText?.text = "${replyDelaySeconds}s"
     }
     
@@ -636,10 +641,6 @@ class MainFragment : Fragment() {
         contactFilterSwitch?.setOnCheckedChangeListener { _, isChecked ->
             preferencesManager?.isContactFilterEnabled = isChecked
             updateContactSelectorState()
-            
-            if (isChecked) {
-                Toast.makeText(mActivity, "Contact filter enabled", Toast.LENGTH_SHORT).show()
-            }
         }
         
         // Handle select contacts button
@@ -664,7 +665,7 @@ class MainFragment : Fragment() {
     }
     
     /**
-     * Update contact selector button state
+     * Update contact selector button state and warning visibility
      */
     private fun updateContactSelectorState() {
         val isEnabled = contactFilterSwitch?.isChecked ?: false
@@ -678,6 +679,11 @@ class MainFragment : Fragment() {
         } else {
             "$count contact${if (count != 1) "s" else ""} selected"
         }
+        
+        // Show warning if auto-reply is ON, contact filter is ON, but no contacts selected
+        val isAutoReplyOn = preferencesManager?.isAutoReplyEnabled ?: false
+        val shouldShowWarning = isAutoReplyOn && isEnabled && count == 0
+        contactFilterWarning?.visibility = if (shouldShowWarning) View.VISIBLE else View.GONE
     }
     
     /**

@@ -388,7 +388,7 @@ class PreferencesManager private constructor(private val thisAppContext: Context
     private val KEY_REPLY_DELAY_SECONDS = "reply_delay_seconds"
     
     var replyDelaySeconds: Int
-        get() = _sharedPrefs.getInt(KEY_REPLY_DELAY_SECONDS, 3) // Default 3 seconds
+        get() = _sharedPrefs.getInt(KEY_REPLY_DELAY_SECONDS, 2) // Default 2 seconds
         set(seconds) {
             val clampedSeconds = seconds.coerceIn(1, 10) // Ensure 1-10 range
             _sharedPrefs.edit().putInt(KEY_REPLY_DELAY_SECONDS, clampedSeconds).apply()

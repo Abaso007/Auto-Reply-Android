@@ -317,6 +317,20 @@
                     ads:layout_constraintStart_toStartOf="parent"
                     ads:layout_constraintTop_toBottomOf="@+id/selectContactsButton" />
 
+                <TextView
+                    android:id="@+id/contactFilterWarning"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="⚠️ Auto-reply for WhatsApp will NOT work. Turn OFF contact filter or select contacts."
+                    android:textSize="11sp"
+                    android:textColor="@android:color/holo_red_dark"
+                    android:gravity="center"
+                    android:visibility="gone"
+                    ads:layout_constraintEnd_toEndOf="parent"
+                    ads:layout_constraintStart_toStartOf="parent"
+                    ads:layout_constraintTop_toBottomOf="@+id/selectedContactsCountText" />
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </com.google.android.material.card.MaterialCardView>
@@ -428,7 +442,7 @@
                         android:layout_width="30dp"
                         android:layout_height="wrap_content"
                         android:gravity="center_horizontal"
-                        android:text="3s"
+                        android:text="2s"
                         android:textColor="?attr/colorOnSurface"
                         android:textSize="18sp"
                         android:textStyle="bold"
