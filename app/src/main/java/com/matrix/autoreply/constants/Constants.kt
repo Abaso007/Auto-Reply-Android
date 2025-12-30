@@ -24,6 +24,15 @@ object Constants {
     const val MIN_DAYS = 0
     const val MAX_DAYS = 7
 
+    // Package names
+    const val PACKAGE_WHATSAPP = "com.whatsapp"
+    const val PACKAGE_WHATSAPP_BUSINESS = "com.whatsapp.w4b"
+    const val PACKAGE_MESSENGER = "com.facebook.orca"
+    const val PACKAGE_INSTAGRAM = "com.instagram.android"
+    
+    // Apps that support contact-based filtering
+    val CONTACT_FILTER_SUPPORTED_PACKAGES = setOf(PACKAGE_WHATSAPP, PACKAGE_WHATSAPP_BUSINESS)
+
     // Notification Listener Service
     const val PERMISSION_DENIED = "Permission Denied"
     const val PERMISSION_GRANTED = "Permission Granted"

@@ -81,8 +81,15 @@ class MainFragment : Fragment() {
     private var mActivity: Activity? = null
     private lateinit var notificationListenerUtil: NotificationListenerUtil
     private lateinit var notificationListenerPermissionLauncher: ActivityResultLauncher<Intent>
+    private lateinit var contactsPermissionLauncher: ActivityResultLauncher<String>
     private lateinit var adView: AdView
     private var isUpdatingCheckboxes = false // Flag to prevent validation during programmatic updates
+    
+    // Contact selector views
+    private var contactSelectorCard: CardView? = null
+    private var contactFilterSwitch: SwitchMaterial? = null
+    private var selectContactsButton: com.google.android.material.button.MaterialButton? = null
+    private var selectedContactsCountText: TextView? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
@@ -102,6 +109,21 @@ class MainFragment : Fragment() {
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
                 val granted = notificationListenerUtil.isNotificationServiceEnabled()
                 handleNotificationListenerPermissionResult(granted)
+            }
+        
+        // Initialize contacts permission launcher
+        contactsPermissionLauncher =
+            registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+                if (granted) {
+                    // Permission granted, now show the dialog
+                    openContactSelectorDialog()
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        "Contacts permission is required to select contacts",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
             }
 
         if (!notificationListenerUtil.isNotificationServiceEnabled()) showPermissionsDialog()
@@ -135,8 +157,16 @@ class MainFragment : Fragment() {
         activeContextsCount = binding.activeContextsCount
         badgesRecyclerView = binding.badgesRecyclerView
         nextBadgeInfo = binding.nextBadgeInfo
+        
+        // Contact selector views
+        contactSelectorCard = binding.contactSelectorCardView
+        contactFilterSwitch = binding.contactFilterSwitch
+        selectContactsButton = binding.selectContactsButton
+        selectedContactsCountText = binding.selectedContactsCountText
+        
         handleReplyOptionsCard()
         setupBadgesDisplay()
+        setupContactSelector()
 
         customTextPreview?.text = customRepliesData!!.getTextToSendOrElse(autoReplyTextPlaceholder)
 
@@ -280,6 +310,9 @@ class MainFragment : Fragment() {
         // Simple save without validation - let users select what they want
         val app = buttonView.tag as App
         preferencesManager!!.saveEnabledApps(app, isChecked)
+        
+        // Update contact selector visibility when WhatsApp is selected/deselected
+        updateContactSelectorVisibility()
     }
 
     private fun saveNumDays() {
@@ -320,6 +353,9 @@ class MainFragment : Fragment() {
         
         // Update schedule display
         updateScheduleDisplay()
+        
+        // Update contact selector state (in case user came back from ContactSelectorFragment)
+        updateContactSelectorState()
         
         // Check and show "What's New" dialog if needed
         showWhatsNewDialogIfNeeded()
@@ -582,6 +618,93 @@ class MainFragment : Fragment() {
     private fun setReplyDelaySeconds() {
         replyDelaySeconds = preferencesManager?.replyDelaySeconds ?: 3
         delaySelectedText?.text = "${replyDelaySeconds}s"
+    }
+    
+    /**
+     * Setup contact selector functionality
+     * Only visible for WhatsApp and WhatsApp Business
+     */
+    private fun setupContactSelector() {
+        // Update visibility based on selected apps
+        updateContactSelectorVisibility()
+        
+        // Load saved state
+        contactFilterSwitch?.isChecked = preferencesManager?.isContactFilterEnabled ?: false
+        updateContactSelectorState()
+        
+        // Handle contact filter switch
+        contactFilterSwitch?.setOnCheckedChangeListener { _, isChecked ->
+            preferencesManager?.isContactFilterEnabled = isChecked
+            updateContactSelectorState()
+            
+            if (isChecked) {
+                Toast.makeText(mActivity, "Contact filter enabled", Toast.LENGTH_SHORT).show()
+            }
+        }
+        
+        // Handle select contacts button
+        selectContactsButton?.setOnClickListener {
+            showContactSelectorDialog()
+        }
+        
+        // Make contact count text clickable too
+        selectedContactsCountText?.setOnClickListener {
+            showContactSelectorDialog()
+        }
+    }
+    
+    /**
+     * Show/hide contact selector card based on enabled apps
+     */
+    private fun updateContactSelectorVisibility() {
+        val enabledApps = preferencesManager?.enabledApps ?: emptySet()
+        val hasWhatsApp = enabledApps.any { Constants.CONTACT_FILTER_SUPPORTED_PACKAGES.contains(it) }
+        
+        contactSelectorCard?.visibility = if (hasWhatsApp) View.VISIBLE else View.GONE
+    }
+    
+    /**
+     * Update contact selector button state
+     */
+    private fun updateContactSelectorState() {
+        val isEnabled = contactFilterSwitch?.isChecked ?: false
+        selectContactsButton?.isEnabled = isEnabled
+        
+        // Update count text
+        val selectedContacts = preferencesManager?.getSelectedContactsForReply() ?: emptySet()
+        val count = selectedContacts.size
+        selectedContactsCountText?.text = if (count == 0) {
+            "No contacts selected"
+        } else {
+            "$count contact${if (count != 1) "s" else ""} selected"
+        }
+    }
+    
+    /**
+     * Show contact selector dialog - checks permission first
+     */
+    private fun showContactSelectorDialog() {
+        // Check if we have contacts permission
+        if (androidx.core.content.ContextCompat.checkSelfPermission(
+                requireContext(),
+                android.Manifest.permission.READ_CONTACTS
+            ) == android.content.pm.PackageManager.PERMISSION_GRANTED
+        ) {
+            // Permission already granted, show dialog
+            openContactSelectorDialog()
+        } else {
+            // Request permission
+            contactsPermissionLauncher.launch(android.Manifest.permission.READ_CONTACTS)
+        }
+    }
+    
+    /**
+     * Actually open the contact selector activity
+     */
+    private fun openContactSelectorDialog() {
+        // Launch ContactSelectorActivity (same pattern as CustomReplyEditorActivity)
+        val intent = Intent(mActivity, com.matrix.autoreply.ui.activity.ContactSelectorActivity::class.java)
+        startActivity(intent)
     }
 
 }

@@ -453,6 +453,60 @@ class PreferencesManager private constructor(private val thisAppContext: Context
             badgesString.split(",").toSet()
         }
     }
+    
+    // Contact filtering preferences
+    private val KEY_CONTACT_FILTER_ENABLED = "contact_filter_enabled"
+    private val KEY_SELECTED_CONTACTS = "selected_contacts"
+    private val KEY_LAST_SELECTED_CONTACTS = "last_selected_contacts"
+    
+    /**
+     * Check if contact filtering is enabled
+     */
+    var isContactFilterEnabled: Boolean
+        get() = _sharedPrefs.getBoolean(KEY_CONTACT_FILTER_ENABLED, false)
+        set(enabled) {
+            _sharedPrefs.edit().putBoolean(KEY_CONTACT_FILTER_ENABLED, enabled).apply()
+        }
+    
+    /**
+     * Get the set of selected contacts for auto-reply
+     */
+    fun getSelectedContactsForReply(): Set<String> {
+        val contactsString = _sharedPrefs.getString(KEY_SELECTED_CONTACTS, "")
+        return if (contactsString.isNullOrEmpty()) {
+            emptySet()
+        } else {
+            contactsString.split("|||").filter { it.isNotEmpty() }.toSet()
+        }
+    }
+    
+    /**
+     * Save the selected contacts for auto-reply
+     */
+    fun setSelectedContactsForReply(contacts: Set<String>) {
+        val contactsString = contacts.joinToString("|||")
+        _sharedPrefs.edit().putString(KEY_SELECTED_CONTACTS, contactsString).apply()
+    }
+    
+    /**
+     * Get the last selected contacts (for "Recently Selected" section)
+     */
+    fun getLastSelectedContacts(): Set<String> {
+        val contactsString = _sharedPrefs.getString(KEY_LAST_SELECTED_CONTACTS, "")
+        return if (contactsString.isNullOrEmpty()) {
+            emptySet()
+        } else {
+            contactsString.split("|||").filter { it.isNotEmpty() }.toSet()
+        }
+    }
+    
+    /**
+     * Save the last selected contacts (for "Recently Selected" section)
+     */
+    fun setLastSelectedContacts(contacts: Set<String>) {
+        val contactsString = contacts.joinToString("|||")
+        _sharedPrefs.edit().putString(KEY_LAST_SELECTED_CONTACTS, contactsString).apply()
+    }
 
     /**
      * Award a badge to the user

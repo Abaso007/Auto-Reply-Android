@@ -12,13 +12,16 @@ import com.matrix.autoreply.store.repository.ReplyLogsDao
 import com.matrix.autoreply.constants.Constants
 import com.matrix.autoreply.store.data.MessageLogs
 import com.matrix.autoreply.store.repository.MessageLogsDao
+import com.matrix.autoreply.store.data.ContactGroup
+import com.matrix.autoreply.store.repository.ContactGroupDao
 
-@Database(entities = [MessageLogs::class, ReplyLogs::class, AppPackage::class], version = 6)
+@Database(entities = [MessageLogs::class, ReplyLogs::class, AppPackage::class, ContactGroup::class], version = 7)
 abstract class MessageLogsDB : RoomDatabase() {
 
     abstract fun messageLogsDao(): MessageLogsDao?
     abstract fun replyLogsDao(): ReplyLogsDao?
     abstract fun appPackageDao(): AppPackageDao?
+    abstract fun contactGroupDao(): ContactGroupDao?
 
     companion object {
         private const val DB_NAME = Constants.LOGS_DB_NAME

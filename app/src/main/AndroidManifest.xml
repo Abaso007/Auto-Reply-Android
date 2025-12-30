@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.READ_CONTACTS"/>
 
     <queries>
 
@@ -109,6 +110,12 @@
         <activity
                 android:name="com.matrix.autoreply.ui.activity.AiSettingsActivity"
                 android:label="AI Settings"
+                android:exported="false"
+                android:parentActivityName="com.matrix.autoreply.ui.activity.TabbedActivity"/>
+        
+        <activity
+                android:name="com.matrix.autoreply.ui.activity.ContactSelectorActivity"
+                android:label="Select Contacts"
                 android:exported="false"
                 android:parentActivityName="com.matrix.autoreply.ui.activity.TabbedActivity"/>
 

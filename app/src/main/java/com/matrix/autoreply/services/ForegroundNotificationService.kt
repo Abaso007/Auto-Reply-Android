@@ -24,6 +24,7 @@ import android.service.notification.StatusBarNotification
 import android.text.SpannableString
 import android.util.Log
 import androidx.core.app.RemoteInput
+import com.matrix.autoreply.constants.Constants
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.consumeEach
@@ -131,7 +132,10 @@ class ForegroundNotificationService : NotificationListenerService() {
             }
             
             // Perform basic checks before queuing (don't check timing yet - that's done in queue)
-            val passesBasicReplyChecks = preferencesManager.isServiceEnabled &&
+            // Check contact filter FIRST to quickly reject unwanted contacts
+            val title = NotificationUtils.getTitle(sbn)
+            val passesBasicReplyChecks = isContactAllowed(title, sbn.packageName) &&
+                    preferencesManager.isServiceEnabled &&
                     preferencesManager.isAutoReplyEnabled &&
                     isSupportedPackage(sbn) &&
                     NotificationUtils.isNewNotification(sbn) &&
@@ -346,6 +350,11 @@ class ForegroundNotificationService : NotificationListenerService() {
         if (title != null && selfDisplayName != null && title.equals(selfDisplayName, ignoreCase = true)) {
             return false
         }
+        
+        // Check if contact filtering is enabled and if contact is in selected list
+        if (!isContactAllowed(title, sbn.packageName)) {
+            return false
+        }
 
         if (dbUtils == null) {
             dbUtils = DbUtils(applicationContext)
@@ -357,6 +366,41 @@ class ForegroundNotificationService : NotificationListenerService() {
         return System.currentTimeMillis() - lastRepliedTime >= timeDelay.coerceAtLeast(
             DELAY_BETWEEN_REPLY_IN_MILLISEC.toLong()
         )
+    }
+    
+    /**
+     * Check if contact is allowed based on filter settings
+     * Note: Contact filtering ONLY applies to WhatsApp and WhatsApp Business
+     */
+    private fun isContactAllowed(contactName: String?, packageName: String): Boolean {
+        // Contact filtering ONLY works for WhatsApp and WhatsApp Business
+        val isWhatsAppPackage = Constants.CONTACT_FILTER_SUPPORTED_PACKAGES.contains(packageName)
+        
+        // For non-WhatsApp apps, always allow (no contact filtering)
+        if (!isWhatsAppPackage) {
+            return true
+        }
+        
+        // For WhatsApp: If contact filter is not enabled, allow all contacts
+        if (!preferencesManager.isContactFilterEnabled) {
+            return true
+        }
+        
+        // If contact name is null, skip
+        if (contactName.isNullOrEmpty()) {
+            return false
+        }
+        
+        // Get selected contacts
+        val selectedContacts = preferencesManager.getSelectedContactsForReply()
+        
+        // If no contacts selected, allow all (filter enabled but empty = allow all)
+        if (selectedContacts.isEmpty()) {
+            return true
+        }
+        
+        // Check if contact is in the selected list
+        return selectedContacts.contains(contactName)
     }
 
     private fun isGroupMessageAndReplyAllowed(sbn: StatusBarNotification): Boolean {

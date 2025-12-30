@@ -244,6 +244,79 @@
 
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- Contact Selector Card (only visible for WhatsApp) -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/contactSelectorCardView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:visibility="gone"
+            ads:layout_constraintTop_toBottomOf="@+id/supportedAppsSelectorCardView">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/contactSelectorTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Reply to Selected Contacts"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    ads:layout_constraintStart_toStartOf="parent"
+                    ads:layout_constraintTop_toTopOf="parent" />
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/contactFilterSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    ads:layout_constraintEnd_toEndOf="parent"
+                    ads:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/contactSelectorDescription"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Enable to reply only to selected contacts"
+                    android:textSize="12sp"
+                    android:textColor="?android:attr/textColorSecondary"
+                    ads:layout_constraintEnd_toEndOf="parent"
+                    ads:layout_constraintStart_toStartOf="parent"
+                    ads:layout_constraintTop_toBottomOf="@+id/contactSelectorTitle" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/selectContactsButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="Select Contacts"
+                    android:enabled="false"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    ads:layout_constraintEnd_toEndOf="parent"
+                    ads:layout_constraintStart_toStartOf="parent"
+                    ads:layout_constraintTop_toBottomOf="@+id/contactSelectorDescription" />
+
+                <TextView
+                    android:id="@+id/selectedContactsCountText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="No contacts selected"
+                    android:textSize="12sp"
+                    android:textColor="?attr/colorPrimary"
+                    android:gravity="center"
+                    ads:layout_constraintEnd_toEndOf="parent"
+                    ads:layout_constraintStart_toStartOf="parent"
+                    ads:layout_constraintTop_toBottomOf="@+id/selectContactsButton" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
         <!-- Group reply switch card -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/groupReplySwitchCardView"

@@ -19,6 +19,16 @@
             android:icon="@drawable/ic_donate"
             android:key="pref_donate" />
 
+        <ListPreference
+            android:key="pref_app_theme"
+            android:title="App Theme"
+            android:summary="Choose your preferred theme"
+            android:entries="@array/theme_entries"
+            android:entryValues="@array/theme_values"
+            android:defaultValue="system"
+            app:useSimpleSummaryProvider="true"
+            android:icon="@drawable/ic_baseline_invert_colors_24" />
+
         <Preference android:title="Want to contribute?"
             android:icon="@drawable/ic_github" >
             <intent android:action="android.intent.action.VIEW"
