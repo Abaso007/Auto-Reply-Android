@@ -59,4 +59,18 @@
         <item>180</item>
         <item>365</item>
     </string-array>
+    
+    <string-array name="theme_entries">
+        <item>Light</item>
+        <item>Dark</item>
+        <item>System Default</item>
+        <item>Dynamic (Material You)</item>
+    </string-array>
+    
+    <string-array name="theme_values">
+        <item>light</item>
+        <item>dark</item>
+        <item>system</item>
+        <item>dynamic</item>
+    </string-array>
 </resources>

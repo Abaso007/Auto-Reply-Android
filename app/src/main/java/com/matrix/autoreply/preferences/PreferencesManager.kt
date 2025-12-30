@@ -454,6 +454,19 @@ class PreferencesManager private constructor(private val thisAppContext: Context
         }
     }
     
+    // Theme preferences
+    private val KEY_APP_THEME = "pref_app_theme"
+    
+    /**
+     * Get the current app theme preference
+     * @return "light", "dark", "system", or "dynamic"
+     */
+    var appTheme: String
+        get() = _sharedPrefs.getString(KEY_APP_THEME, "system") ?: "system"
+        set(theme) {
+            _sharedPrefs.edit().putString(KEY_APP_THEME, theme).apply()
+        }
+    
     // Contact filtering preferences
     private val KEY_CONTACT_FILTER_ENABLED = "contact_filter_enabled"
     private val KEY_SELECTED_CONTACTS = "selected_contacts"

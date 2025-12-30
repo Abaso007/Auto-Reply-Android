@@ -1,5 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme for LIGHT mode -->
+    <!-- Base application theme for DARK mode -->
     <style name="Theme.WaReply" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/blue_500</item>
@@ -11,17 +11,17 @@
         <item name="colorOnSecondary">@color/white</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">@color/blue_700</item>
-        <!-- IMPORTANT: Make status bar icons DARK in light mode (for visibility on blue background) -->
-        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
+        <!-- IMPORTANT: Make status bar icons LIGHT in dark mode (white on blue background) -->
+        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
         <!-- Force action bar colors to always use blue -->
         <item name="actionBarStyle">@style/Theme.WaReply.ActionBar</item>
         <item name="colorPrimaryDark">@color/blue_700</item>
-        <!-- Text colors for better visibility in light mode -->
-        <item name="android:textColorPrimary">@color/black</item>
-        <item name="android:textColorSecondary">@color/gray_800</item>
+        <!-- Text colors for better visibility in dark mode -->
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/gray_500</item>
         <!-- Material text colors -->
-        <item name="colorOnSurface">@color/black</item>
-        <item name="colorOnBackground">@color/black</item>
+        <item name="colorOnSurface">@color/white</item>
+        <item name="colorOnBackground">@color/white</item>
         <!-- Customize your theme here. -->
     </style>
 
@@ -36,7 +36,7 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:statusBarColor" tools:targetApi="l">@color/blue_700</item>
-        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
     </style>
 
     <style name="Theme.WaReply.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">

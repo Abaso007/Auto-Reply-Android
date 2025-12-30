@@ -15,7 +15,9 @@ package com.matrix.autoreply
 
 import android.app.Application
 import android.content.Context
+import android.os.Build
 import androidx.appcompat.app.AppCompatDelegate
+import com.google.android.material.color.DynamicColors
 import com.matrix.autoreply.preferences.PreferencesManager
 
 class AutoReplyApp : Application() {
@@ -26,8 +28,43 @@ class AutoReplyApp : Application() {
         // Initialize PreferencesManager early to ensure it's available for all services
         PreferencesManager.initialize(this)
         
-        // Set default theme to dark mode
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+        // Apply saved theme preference
+        applyTheme()
+    }
+    
+    /**
+     * Apply the user's saved theme preference
+     */
+    private fun applyTheme() {
+        val preferencesManager = PreferencesManager.getPreferencesInstance(this)
+        val theme = preferencesManager?.appTheme ?: "system"
+        
+        when (theme) {
+            "light" -> {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            }
+            "dark" -> {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            }
+            "system" -> {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+            }
+            "dynamic" -> {
+                // Dynamic colors (Material You) for Android 12+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    if (DynamicColors.isDynamicColorAvailable()) {
+                        // Apply dynamic colors
+                        DynamicColors.applyToActivitiesIfAvailable(this)
+                    }
+                }
+                // Use system theme as base
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+            }
+            else -> {
+                // Default to system theme if unknown preference
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+            }
+        }
     }
     
     companion object {

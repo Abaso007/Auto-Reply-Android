@@ -3,13 +3,17 @@ package com.matrix.autoreply.ui.fragment
 import android.app.Activity
 import android.content.DialogInterface
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
+import com.google.android.material.color.DynamicColors
 import com.matrix.autoreply.R
 import com.matrix.autoreply.constants.Constants
 import com.matrix.autoreply.helpers.AutoStartHelper.Companion.instance
@@ -64,6 +68,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val donatePref = findPreference<Preference>("pref_donate")
         donatePref?.setOnPreferenceClickListener {
             DonateHelper.showDonateDialog(requireContext())
+            true
+        }
+        
+        // Handle theme preference changes
+        val themePref = findPreference<ListPreference>("pref_app_theme")
+        themePref?.setOnPreferenceChangeListener { _, newValue ->
+            val theme = newValue as String
+            applyTheme(theme)
             true
         }
 
@@ -133,6 +145,44 @@ class SettingsFragment : PreferenceFragmentCompat() {
         } else {
             preferencesManager!!.setServicePref(false)
             Toast.makeText(requireActivity(), Constants.PERMISSION_DENIED, Toast.LENGTH_SHORT).show()
+        }
+    }
+    
+    /**
+     * Apply the selected theme
+     */
+    private fun applyTheme(theme: String) {
+        // Save the preference
+        preferencesManager?.appTheme = theme
+        
+        when (theme) {
+            "light" -> {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            }
+            "dark" -> {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            }
+            "system" -> {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+            }
+            "dynamic" -> {
+                // Dynamic colors (Material You) for Android 12+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    // Apply dynamic colors if available
+                    if (DynamicColors.isDynamicColorAvailable()) {
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+                        // Dynamic colors will be applied in Application class
+                    } else {
+                        // Fallback to system theme if dynamic colors not available
+                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+                        Toast.makeText(requireContext(), "Dynamic colors not available on this device", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    // For Android 11 and below, fallback to system theme
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+                    Toast.makeText(requireContext(), "Dynamic colors require Android 12+", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 }
