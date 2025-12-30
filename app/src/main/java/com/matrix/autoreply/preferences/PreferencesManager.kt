@@ -467,6 +467,39 @@ class PreferencesManager private constructor(private val thisAppContext: Context
             _sharedPrefs.edit().putString(KEY_APP_THEME, theme).apply()
         }
     
+    // Group filtering preferences
+    private val KEY_GROUP_FILTER_ENABLED = "group_filter_enabled"
+    private val KEY_SELECTED_GROUPS = "selected_groups"
+    
+    /**
+     * Check if group filtering is enabled
+     */
+    var isGroupFilterEnabled: Boolean
+        get() = _sharedPrefs.getBoolean(KEY_GROUP_FILTER_ENABLED, false)
+        set(enabled) {
+            _sharedPrefs.edit().putBoolean(KEY_GROUP_FILTER_ENABLED, enabled).apply()
+        }
+    
+    /**
+     * Get the set of selected group names for auto-reply
+     */
+    fun getSelectedGroupsForReply(): Set<String> {
+        val groupsString = _sharedPrefs.getString(KEY_SELECTED_GROUPS, "")
+        return if (groupsString.isNullOrEmpty()) {
+            emptySet()
+        } else {
+            groupsString.split("|||").filter { it.isNotEmpty() }.toSet()
+        }
+    }
+    
+    /**
+     * Save the selected group names for auto-reply
+     */
+    fun setSelectedGroupsForReply(groups: Set<String>) {
+        val groupsString = groups.joinToString("|||")
+        _sharedPrefs.edit().putString(KEY_SELECTED_GROUPS, groupsString).apply()
+    }
+    
     // Contact filtering preferences
     private val KEY_CONTACT_FILTER_ENABLED = "contact_filter_enabled"
     private val KEY_SELECTED_CONTACTS = "selected_contacts"

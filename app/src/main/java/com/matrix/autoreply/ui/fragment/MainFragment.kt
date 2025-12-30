@@ -34,6 +34,7 @@ import com.matrix.autoreply.model.CustomRepliesData.Companion.getInstance
 import com.matrix.autoreply.preferences.PreferencesManager
 import com.matrix.autoreply.preferences.PreferencesManager.Companion.getPreferencesInstance
 import com.matrix.autoreply.ui.CustomDialog
+import com.matrix.autoreply.ui.ManageGroupsDialog
 import com.matrix.autoreply.ui.activity.replyEditor.CustomReplyEditorActivity
 import com.matrix.autoreply.utils.NotificationListenerUtil
 import com.matrix.autoreply.utils.ConversationContextManager
@@ -91,6 +92,13 @@ class MainFragment : Fragment() {
     private var selectContactsButton: com.google.android.material.button.MaterialButton? = null
     private var selectedContactsCountText: TextView? = null
     private var contactFilterWarning: TextView? = null
+    
+    // Group selector views
+    private var groupSelectorCard: CardView? = null
+    private var groupFilterSwitch: SwitchMaterial? = null
+    private var manageGroupsButton: com.google.android.material.button.MaterialButton? = null
+    private var selectedGroupsCountText: TextView? = null
+    private var groupFilterWarning: TextView? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
@@ -166,9 +174,17 @@ class MainFragment : Fragment() {
         selectedContactsCountText = binding.selectedContactsCountText
         contactFilterWarning = binding.contactFilterWarning
         
+        // Group selector views
+        groupSelectorCard = binding.groupSelectorCardView
+        groupFilterSwitch = binding.groupFilterSwitch
+        manageGroupsButton = binding.manageGroupsButton
+        selectedGroupsCountText = binding.selectedGroupsCountText
+        groupFilterWarning = binding.groupFilterWarning
+        
         handleReplyOptionsCard()
         setupBadgesDisplay()
         setupContactSelector()
+        setupGroupSelector()
 
         customTextPreview?.text = customRepliesData!!.getTextToSendOrElse(autoReplyTextPlaceholder)
 
@@ -186,6 +202,9 @@ class MainFragment : Fragment() {
         setReplyDelaySeconds()
         createSupportedAppCheckboxes()
         updateScheduleDisplay()
+        
+        // Update group reply card visibility based on enabled apps
+        updateGroupReplyCardVisibility()
     }
 
     private fun initializeAdView(context: Context) {
@@ -237,6 +256,9 @@ class MainFragment : Fragment() {
                 Toast.makeText(mActivity, R.string.group_reply_off_info_message, Toast.LENGTH_SHORT).show()
             }
             preferencesManager!!.setGroupReplyPref(isChecked)
+            
+            // Update group selector visibility
+            updateGroupSelectorVisibility()
         }
     }
 
@@ -318,6 +340,9 @@ class MainFragment : Fragment() {
         
         // Update contact selector visibility when WhatsApp is selected/deselected
         updateContactSelectorVisibility()
+        
+        // Update group reply card visibility when WhatsApp is selected/deselected
+        updateGroupReplyCardVisibility()
     }
 
     private fun saveNumDays() {
@@ -361,6 +386,10 @@ class MainFragment : Fragment() {
         
         // Update contact selector state (in case user came back from ContactSelectorFragment)
         updateContactSelectorState()
+        
+        // Update group selector state and visibility
+        updateGroupSelectorVisibility()
+        updateGroupSelectorState()
         
         // Check and show "What's New" dialog if needed
         showWhatsNewDialogIfNeeded()
@@ -711,6 +740,98 @@ class MainFragment : Fragment() {
         // Launch ContactSelectorActivity (same pattern as CustomReplyEditorActivity)
         val intent = Intent(mActivity, com.matrix.autoreply.ui.activity.ContactSelectorActivity::class.java)
         startActivity(intent)
+    }
+    
+    /**
+     * Setup group selector functionality
+     * Visible only when Group Reply is enabled
+     */
+    private fun setupGroupSelector() {
+        // Update visibility based on group reply setting
+        updateGroupSelectorVisibility()
+        
+        // Load saved state
+        groupFilterSwitch?.isChecked = preferencesManager?.isGroupFilterEnabled ?: false
+        updateGroupSelectorState()
+        
+        // Handle group filter switch
+        groupFilterSwitch?.setOnCheckedChangeListener { _, isChecked ->
+            preferencesManager?.isGroupFilterEnabled = isChecked
+            updateGroupSelectorState()
+        }
+        
+        // Handle manage groups button
+        manageGroupsButton?.setOnClickListener {
+            showManageGroupsDialog()
+        }
+        
+        // Make group count text clickable too
+        selectedGroupsCountText?.setOnClickListener {
+            if (manageGroupsButton?.isEnabled == true) {
+                showManageGroupsDialog()
+            }
+        }
+    }
+    
+    /**
+     * Show/hide group selector card based on group reply setting
+     */
+    private fun updateGroupSelectorVisibility() {
+        val isGroupReplyEnabled = preferencesManager?.isGroupReplyEnabled ?: false
+        groupSelectorCard?.visibility = if (isGroupReplyEnabled) View.VISIBLE else View.GONE
+    }
+    
+    /**
+     * Update group selector button state and warning visibility
+     */
+    private fun updateGroupSelectorState() {
+        val isEnabled = groupFilterSwitch?.isChecked ?: false
+        manageGroupsButton?.isEnabled = isEnabled
+        
+        // Update count text
+        val selectedGroups = preferencesManager?.getSelectedGroupsForReply() ?: emptySet()
+        val count = selectedGroups.size
+        selectedGroupsCountText?.text = if (count == 0) {
+            "No groups selected"
+        } else {
+            "$count group${if (count != 1) "s" else ""} selected"
+        }
+        
+        // Show warning if auto-reply is ON, group reply is ON, group filter is ON, but no groups selected
+        val isAutoReplyOn = preferencesManager?.isAutoReplyEnabled ?: false
+        val isGroupReplyOn = preferencesManager?.isGroupReplyEnabled ?: false
+        val shouldShowWarning = isAutoReplyOn && isGroupReplyOn && isEnabled && count == 0
+        groupFilterWarning?.visibility = if (shouldShowWarning) View.VISIBLE else View.GONE
+    }
+    
+    /**
+     * Show manage groups dialog
+     */
+    private fun showManageGroupsDialog() {
+        val dialog = ManageGroupsDialog(requireContext()) {
+            // Callback when groups are updated
+            updateGroupSelectorState()
+        }
+        dialog.show()
+    }
+    
+    /**
+     * Show/hide Group Reply card based on enabled apps
+     * Group Reply is only relevant for WhatsApp/WhatsApp Business
+     */
+    private fun updateGroupReplyCardVisibility() {
+        val enabledApps = preferencesManager?.enabledApps ?: emptySet()
+        val hasWhatsApp = enabledApps.any { Constants.CONTACT_FILTER_SUPPORTED_PACKAGES.contains(it) }
+        
+        // Show group reply card only if WhatsApp is enabled
+        binding.groupReplySwitchCardView.visibility = if (hasWhatsApp) View.VISIBLE else View.GONE
+        
+        // Also update group selector visibility if group reply card is hidden
+        if (!hasWhatsApp) {
+            groupSelectorCard?.visibility = View.GONE
+        } else {
+            updateGroupSelectorVisibility()
+        }
     }
 
 }

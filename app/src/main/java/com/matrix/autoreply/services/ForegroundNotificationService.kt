@@ -132,9 +132,17 @@ class ForegroundNotificationService : NotificationListenerService() {
             }
             
             // Perform basic checks before queuing (don't check timing yet - that's done in queue)
-            // Check contact filter FIRST to quickly reject unwanted contacts
             val title = NotificationUtils.getTitle(sbn)
-            val passesBasicReplyChecks = isContactAllowed(title, sbn.packageName) &&
+            val isGroupMsg = sbn.notification.extras.getBoolean("android.isGroupConversation")
+            
+            // Apply appropriate filtering: group filtering for groups, contact filtering for individuals
+            val passesFilterCheck = if (isGroupMsg) {
+                isGroupAllowed(title)
+            } else {
+                isContactAllowed(title, sbn.packageName)
+            }
+            
+            val passesBasicReplyChecks = passesFilterCheck &&
                     preferencesManager.isServiceEnabled &&
                     preferencesManager.isAutoReplyEnabled &&
                     isSupportedPackage(sbn) &&
@@ -351,8 +359,15 @@ class ForegroundNotificationService : NotificationListenerService() {
             return false
         }
         
-        // Check if contact filtering is enabled and if contact is in selected list
-        if (!isContactAllowed(title, sbn.packageName)) {
+        // Apply appropriate filtering based on message type
+        val isGroupMsg = sbn.notification.extras.getBoolean("android.isGroupConversation")
+        val passesFilterCheck = if (isGroupMsg) {
+            isGroupAllowed(title)
+        } else {
+            isContactAllowed(title, sbn.packageName)
+        }
+        
+        if (!passesFilterCheck) {
             return false
         }
 
@@ -369,8 +384,46 @@ class ForegroundNotificationService : NotificationListenerService() {
     }
     
     /**
+     * Check if group is allowed based on filter settings
+     * Group filtering applies when group reply is enabled
+     */
+    private fun isGroupAllowed(groupName: String?): Boolean {
+        // If group filter is not enabled, allow all groups
+        if (!preferencesManager.isGroupFilterEnabled) {
+            Log.d(TAG, "Group filter disabled, allowing all groups")
+            return true
+        }
+        
+        // If group name is null, skip
+        if (groupName.isNullOrEmpty()) {
+            Log.d(TAG, "Group name is null/empty, rejecting")
+            return false
+        }
+        
+        // Trim whitespace from incoming group name (WhatsApp may add trailing spaces)
+        val trimmedGroupName = groupName.trim()
+        
+        // Get selected groups
+        val selectedGroups = preferencesManager.getSelectedGroupsForReply()
+        
+        Log.d(TAG, "Checking group: '$groupName' (trimmed: '$trimmedGroupName') against ${selectedGroups.size} selected groups")
+        Log.d(TAG, "Selected groups: ${selectedGroups.joinToString(", ") { "'$it'" }}")
+        
+        // If no groups selected, allow all (filter enabled but empty = allow all)
+        if (selectedGroups.isEmpty()) {
+            Log.d(TAG, "No groups selected, allowing all")
+            return true
+        }
+        
+        // Check if group is in the selected list (exact match after trimming, case-sensitive)
+        val isAllowed = selectedGroups.any { it.trim() == trimmedGroupName }
+        Log.d(TAG, "Group '$trimmedGroupName' ${if (isAllowed) "ALLOWED" else "BLOCKED"}")
+        return isAllowed
+    }
+    
+    /**
      * Check if contact is allowed based on filter settings
-     * Note: Contact filtering ONLY applies to WhatsApp and WhatsApp Business
+     * Note: Contact filtering ONLY applies to WhatsApp and WhatsApp Business for INDIVIDUAL chats
      */
     private fun isContactAllowed(contactName: String?, packageName: String): Boolean {
         // Contact filtering ONLY works for WhatsApp and WhatsApp Business

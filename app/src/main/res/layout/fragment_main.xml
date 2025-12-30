@@ -384,6 +384,93 @@
 
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- Group Selector Card (visible when Group Reply is ON) -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/groupSelectorCardView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:visibility="gone"
+            ads:layout_constraintTop_toBottomOf="@+id/groupReplySwitchCardView">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/groupSelectorTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Reply to Selected Groups"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    ads:layout_constraintStart_toStartOf="parent"
+                    ads:layout_constraintTop_toTopOf="parent" />
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/groupFilterSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    ads:layout_constraintEnd_toEndOf="parent"
+                    ads:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/groupSelectorDescription"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Enable to reply only to specific groups"
+                    android:textSize="12sp"
+                    android:textColor="?android:attr/textColorSecondary"
+                    ads:layout_constraintEnd_toEndOf="parent"
+                    ads:layout_constraintStart_toStartOf="parent"
+                    ads:layout_constraintTop_toBottomOf="@+id/groupSelectorTitle" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/manageGroupsButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="Manage Groups"
+                    android:enabled="false"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    ads:layout_constraintEnd_toEndOf="parent"
+                    ads:layout_constraintStart_toStartOf="parent"
+                    ads:layout_constraintTop_toBottomOf="@+id/groupSelectorDescription" />
+
+                <TextView
+                    android:id="@+id/selectedGroupsCountText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="No groups selected"
+                    android:textSize="12sp"
+                    android:textColor="?attr/colorPrimary"
+                    android:gravity="center"
+                    ads:layout_constraintEnd_toEndOf="parent"
+                    ads:layout_constraintStart_toStartOf="parent"
+                    ads:layout_constraintTop_toBottomOf="@+id/manageGroupsButton" />
+
+                <TextView
+                    android:id="@+id/groupFilterWarning"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="⚠️ Auto-reply for groups will NOT work. Turn OFF group filter or add group names."
+                    android:textSize="11sp"
+                    android:textColor="@android:color/holo_red_dark"
+                    android:gravity="center"
+                    android:visibility="gone"
+                    ads:layout_constraintEnd_toEndOf="parent"
+                    ads:layout_constraintStart_toStartOf="parent"
+                    ads:layout_constraintTop_toBottomOf="@+id/selectedGroupsCountText" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
         <!-- Reply Delay Selector -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/replyDelayCardView"
